@@ -61,8 +61,8 @@ def export_columns(table_name: str, fileName, engine: Engine, examples: list[lis
         raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
     
 def execute_filtered_query(db, table_name, order_by, filters, page=1, size=20):
-    offset = (page - 1) * size
-    query = f"SELECT * FROM {table_name}"
+    offset = (page - 1) * size + 1
+    query = f"SELECT *, ROW_NUMBER() OVER (ORDER BY {order_by} DESC) AS RowNum FROM {table_name}"
     
     conditions = []
     for column, value in filters.items():
@@ -72,9 +72,9 @@ def execute_filtered_query(db, table_name, order_by, filters, page=1, size=20):
     if conditions:
         query += " WHERE " + " AND ".join(conditions)
     
-    query += f" ORDER BY {order_by} DESC OFFSET {offset} ROWS FETCH NEXT {size} ROWS ONLY"
-    
-    res = db.execute(text(query)).fetchall()
+    last_query = f"WITH TEMP AS ({query}) SELECT * FROM TEMP WHERE RowNum BETWEEN {offset} AND {offset + size - 1}"
+
+    res = db.execute(text(last_query)).fetchall()
     data = [dict(row._mapping) for row in res]
     
     count_query = f"SELECT COUNT(*) FROM {table_name}"

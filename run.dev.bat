@@ -1,7 +1,7 @@
 @echo off
 cd be
-start uvicorn app.main:app --reload
+start "" "%~dp0be\run.bat"
 
 cd ..
 cd fe
-start pnpm run dev --mode=development --host=0.0.0.0
+start "" "%~dp0fe\run.bat"
