@@ -9,6 +9,7 @@ import { X, Search } from 'lucide-react'
 import { useLoading } from 'src/store/loading'
 import PaginationButton from 'src/components/PaginationButton'
 import { ERR } from 'src/constants/HTTP'
+import UploadFile from './UploadFile';
 
 const PAGE_SIZE = 20
 const ExcelPage = ({tableconfig, apiName, filterValue, filterConfig, title}) => {
@@ -136,9 +137,9 @@ const ExcelPage = ({tableconfig, apiName, filterValue, filterConfig, title}) => 
         <div>
             <div ref={action} className='bg-white px-2 py-4 sticky top-[80px] z-20'>
                 <div className='flex gap-2 items-center py-2 flex-wrap'>
-                    <button onClick={handleGetExample} className='p-2 bg-green-600 rounded-xl text-white'>Lấy mẫu excel</button>
-                    <input onChange={handleGetFile} onClick={e => (e.target.value = null)} className='file:bg-[#4e73df] file:border-none file:p-2 file:rounded-lg file:text-white' type="file" />
-                    <button onClick={handleSave} className='p-2 bg-green-600 rounded-xl text-white min-w-[70px]'>Lưu</button>
+                    <button onClick={handleGetExample} className='p-2 pt-[0.45rem] flex item bg-green-600 rounded-xl text-white'>Lấy mẫu excel</button>
+                    <UploadFile onChange={handleGetFile} />
+                    <button onClick={handleSave} className='p-2 pt-[0.45rem] bg-green-600 rounded-xl text-white min-w-[70px]'>Lưu</button>
                 </div>
                 <div className='border-b border-gray-300 w-full mt-1'></div>
                 <h1 className='text-black text-2xl font-bold mt-1'>{title}</h1>
