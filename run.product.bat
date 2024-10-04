@@ -1,7 +1,7 @@
 @echo off
 cd be
-start uvicorn app.main:app --reload --host=0.0.0.0 --port=8001
+start "" "%~dp0be\run.product.bat"
 
 cd ..
 cd fe
-start pnpm run dev --mode=production --host=0.0.0.0 --port=87
+start "" "%~dp0fe\run.product.bat"
