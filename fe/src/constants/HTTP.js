@@ -1,0 +1,1 @@
+export const ERR = "Có lỗi hệ thống, thử lại sau!"
