@@ -9,6 +9,7 @@ const Toast = () => {
     const toast = useRef()
 
     useEffect(() => {
+        if (!toast.current) return
         if (show) {
             toast.current.style.transform = 'translateX(0)'
             clearTimeout(timeout.current)
