@@ -1,7 +1,7 @@
 import {create} from 'zustand'
 
 export const useToast = create((set) => ({
-    type: 'success',
+    type: '',
     show: false,
     message: '',
     showMessage: (type, message) => set({ show: true, type, message }),

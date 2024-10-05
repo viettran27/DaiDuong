@@ -22,6 +22,7 @@ const Toast = () => {
     }, [show])
     
     return (
+        show &&
         <div
             ref={toast}
             className={`fixed flex gap-2 transition-all duration-100 z-20 right-5 top-[95px] px-2 py-3 rounded-lg text-white ${type === "success" ? "bg-green-600" : "bg-red-600"}`}
