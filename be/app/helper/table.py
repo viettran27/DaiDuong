@@ -101,39 +101,38 @@ def validate_and_import_excel(file, engine, table_name, dtype, columns_to_valida
         raise HTTPException(status_code=400, detail="Hãy dùng file Excel")
     
     # Đọc dữ liệu từ Excel
-    df = pd.read_excel(file.file)
-
+    excel_data = pd.read_excel(file.file, sheet_name=None)
     invalid_data = {col: [] for col in columns_to_validate}
 
     # Kiểm tra dữ liệu cho từng cột
-    for idx in range(len(df)):
-        for col, col_type in columns_to_validate.items():            
-            value = df.at[idx, col]
-            if pd.isnull(value):
-                continue
-            elif col_type == 'date' and not is_date(value):
-                invalid_data[col].append(idx + 2)
-            elif col_type == 'number' and not is_number(value):
-                invalid_data[col].append(idx + 2)
-            elif col_type == 'integer' and not is_integer(value):
-                invalid_data[col].append(idx + 2)
-            elif col_type == 'time':
-                if dateColumn and pd.notnull(value):
-                    if isinstance(value, str):
-                        value = datetime.strptime(value, "%H:%M").time()
-                    date_value = df.at[idx, dateColumn]
-                    if pd.notnull(date_value):
-                        df.at[idx, col] = datetime.combine(date_value, value)
-                    else:
-                        invalid_data[col].append(idx + 2)
+    for sheet_name, df in excel_data.items():
+        for idx in range(len(df)):
+            for col, col_type in columns_to_validate.items():            
+                value = df.at[idx, col]
+                if pd.isnull(value):
+                    continue
+                elif col_type == 'date' and not is_date(value):
+                    invalid_data[col].append(idx + 2)
+                elif col_type == 'number' and not is_number(value):
+                    invalid_data[col].append(idx + 2)
+                elif col_type == 'integer' and not is_integer(value):
+                    invalid_data[col].append(idx + 2)
+                elif col_type == 'time':
+                    if dateColumn and pd.notnull(value):
+                        if isinstance(value, str):
+                            value = datetime.strptime(value, "%H:%M").time()
+                        date_value = df.at[idx, dateColumn]
+                        if pd.notnull(date_value):
+                            df.at[idx, col] = datetime.combine(date_value, value)
+                        else:
+                            invalid_data[col].append(idx + 2)
+        # Ném lỗi nếu có dữ liệu không hợp lệ
+        for col, invalid_rows in invalid_data.items():
+            if invalid_rows:
+                raise HTTPException(status_code=400, detail=f"{sheet_name} {col} sai định dạng ở dòng {', '.join(map(str, invalid_rows))}")
 
-    # Ném lỗi nếu có dữ liệu không hợp lệ
-    for col, invalid_rows in invalid_data.items():
-        if invalid_rows:
-            raise HTTPException(status_code=400, detail=f"{col} sai định dạng ở dòng {', '.join(map(str, invalid_rows))}")
-        
-    # Nhập dữ liệu vào SQL Server
-    import_to_sql(df, table_name, dtype, engine)
+        # Nhập dữ liệu vào SQL Server
+        import_to_sql(df, table_name, dtype, engine)
 
     return {
         "message": "Nhập dữ liệu thành công"

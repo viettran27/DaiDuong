@@ -96,8 +96,7 @@ const ExcelPage = ({tableconfig, apiName, filterValue, filterConfig, title}) => 
         showLoading()
         axiosClient.post(`/api_${apiName}`, formData)
             .then((res) => {
-                showMessage("success", res?.message)
-                handleDeleteSearch()
+                handleDeleteSearch(() => showMessage("success", res?.message))
             }).catch((err) => {
                 hideLoading()
                 showMessage("error", err?.response?.data?.detail || ERR)
@@ -110,7 +109,7 @@ const ExcelPage = ({tableconfig, apiName, filterValue, filterConfig, title}) => 
         setPage(1)
     }
 
-    const handleDeleteSearch = () => {
+    const handleDeleteSearch = (callback) => {
         setFilter(filterValue)
         showLoading()
         axiosClient.get(`/api_${apiName}?page=1&size=${PAGE_SIZE}`)
@@ -119,6 +118,7 @@ const ExcelPage = ({tableconfig, apiName, filterValue, filterConfig, title}) => 
                 setTotalPage(res?.total_page)
                 setPage(1)
                 scrollTop()
+                callback && callback()
                 hideLoading()
             }).catch((err) => {
                 hideLoading()
