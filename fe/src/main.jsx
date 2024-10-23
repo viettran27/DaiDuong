@@ -9,7 +9,7 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/hr" />} />
+        <Route path="/" element={<Navigate to="/qty" />} />
         <Route path="/" element={<App />} >
           {routes.map((route, index) => (
             <Route key={index} path={route.path} element={route.component} />
